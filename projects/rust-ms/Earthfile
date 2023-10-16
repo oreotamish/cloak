@@ -20,12 +20,12 @@ build-cache:
 build:
     FROM +build-cache
     COPY --dir src Cargo.lock Cargo.toml .
-    RUN cargo build --release --bin rust-build
-    SAVE ARTIFACT target/release/rust-build rust-build
+    RUN cargo build --release --bin rust-ms
+    SAVE ARTIFACT target/release/rust-ms rust-ms
 
 docker:
     FROM debian:buster-slim
-    COPY +build/rust-build rust-build
+    COPY +build/rust-ms rust-ms
     EXPOSE 9091
     ENTRYPOINT ["./rust-build"]
     SAVE IMAGE --push tamish13/cloak:rust

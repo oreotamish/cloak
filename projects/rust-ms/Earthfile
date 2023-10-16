@@ -1,0 +1,31 @@
+VERSION 0.7
+FROM rust:1.72
+WORKDIR /rust-ms
+
+install-chef:
+    RUN cargo install --debug cargo-chef
+
+prepare-cache:
+    FROM +install-chef
+    COPY --dir src Cargo.toml Cargo.lock .
+    RUN cargo chef prepare
+    SAVE ARTIFACT recipe.json
+
+build-cache:
+    FROM +install-chef
+    COPY +prepare-cache/recipe.json ./
+    CACHE target
+    RUN cargo chef cook --release
+
+build:
+    FROM +build-cache
+    COPY --dir src Cargo.lock Cargo.toml .
+    RUN cargo build --release --bin rust-build
+    SAVE ARTIFACT target/release/rust-build rust-build
+
+docker:
+    FROM debian:buster-slim
+    COPY +build/rust-build rust-build
+    EXPOSE 9091
+    ENTRYPOINT ["./rust-build"]
+    SAVE IMAGE --push tamish13/cloak:rust

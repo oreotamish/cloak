@@ -1,0 +1,19 @@
+VERSION 0.7
+FROM golang:1.21-alpine3.18
+WORKDIR /go-workdir
+
+build:
+    COPY main.go .
+    RUN go build -o output/example main.go
+    SAVE ARTIFACT output/example AS LOCAL example
+    ARG USERARCH
+    RUN echo $USERARCH
+
+docker:
+    COPY +build/example .
+    ENTRYPOINT ["/go-workdir/example"]
+    SAVE IMAGE go-example:latest
+
+all:
+    BUILD +build
+    BUILD +docker

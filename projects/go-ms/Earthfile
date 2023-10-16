@@ -1,19 +1,31 @@
 VERSION 0.7
 FROM golang:1.21-alpine3.18
-WORKDIR /go-workdir
+WORKDIR /go-ms
+
+deps:
+    COPY go.mod go.sum ./
+    RUN go mod download
+    SAVE ARTIFACT go.mod AS LOCAL go.mod
+    SAVE ARTIFACT go.sum AS LOCAL go.sum
 
 build:
+    FROM +deps
     COPY main.go .
-    RUN go build -o output/example main.go
-    SAVE ARTIFACT output/example AS LOCAL example
-    ARG USERARCH
-    RUN echo $USERARCH
+    RUN go build -o build/go-ms main.go
+    SAVE ARTIFACT build/go-ms /go-ms AS LOCAL build/go-ms
 
 docker:
-    COPY +build/example .
-    ENTRYPOINT ["/go-workdir/example"]
-    SAVE IMAGE go-example:latest
+    COPY +build/go-ms .
+    ENTRYPOINT ["/go-ms/go-ms"]
+    SAVE IMAGE --push tamish13/cloak:go
+
+unit-test:
+    FROM +deps
+    COPY main.go .
+    COPY main_test.go .
+    RUN CGO_ENABLED=0 go test github.com/oreotamish/cloak/projects/go-ms
 
 all:
     BUILD +build
+    BUILD +unit-test
     BUILD +docker

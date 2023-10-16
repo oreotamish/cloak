@@ -1,24 +1,40 @@
 package main
 
 import (
-	"io/ioutil"
-	"os"
+	"net/http"
+	"net/http/httptest"
 	"testing"
+
+	"github.com/gin-gonic/gin"
 )
 
-func TestMain(t *testing.T) {
-	origStdout := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
+func TestHelloWorld(t *testing.T) {
+	gin.SetMode(gin.TestMode)
 
-	main()
+	r := gin.Default()
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Hello World",
+		})
+	})
 
-	w.Close()
-	out, _ := ioutil.ReadAll(r)
-	os.Stdout = origStdout
+	req, err := http.NewRequest(http.MethodGet, "/", nil)
+	if err != nil {
+		t.Fatalf("Could not create request: %v", err)
+	}
 
-	expected := "hello world\n"
-	if string(out) != expected {
-		t.Errorf("Expected %q but got %q", expected, out)
+	rr := httptest.NewRecorder()
+
+	r.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	expected := `{"message":"Hello World"}`
+	if rr.Body.String() != expected {
+		t.Errorf("handler returned unexpected body: got %v want %v",
+			rr.Body.String(), expected)
 	}
 }

@@ -29,3 +29,7 @@ docker:
     EXPOSE 9091
     ENTRYPOINT ["./rust-build"]
     SAVE IMAGE --push tamish13/cloak:rust
+
+all:
+    BUILD +build
+    BUILD +docker

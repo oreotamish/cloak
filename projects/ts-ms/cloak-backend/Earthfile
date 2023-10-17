@@ -4,6 +4,7 @@ WORKDIR /ts-ms/src
 
 deps:
     COPY package.json pnpm-lock.yaml nest-cli.json ./
+    RUN npm install -g pnpm
     RUN pnpm install
     COPY tsconfig.json ./
     COPY . .

@@ -24,7 +24,7 @@ build:
     SAVE ARTIFACT target/release/rust-ms rust-ms
 
 docker:
-    FROM debian:buster-slim
+    FROM debian:bookworm
     COPY +build/rust-ms rust-ms
     EXPOSE 9091
     ENTRYPOINT ["./rust-ms"]

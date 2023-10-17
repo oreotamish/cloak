@@ -20,8 +20,8 @@ build-cache:
 build:
     FROM +build-cache
     COPY --dir src Cargo.lock Cargo.toml .
-    RUN cargo build --release --bin rust-build
-    SAVE ARTIFACT target/release/rust-build rust-build
+    RUN cargo build --release --bin rust-ms
+    SAVE ARTIFACT target/release/rust-ms rust-build
 
 docker:
     FROM debian:buster-slim

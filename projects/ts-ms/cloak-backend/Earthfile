@@ -3,7 +3,7 @@ FROM node:latest
 WORKDIR /ts-ms/src
 
 deps:
-    COPY package.json pnpm-lock.json ./
+    COPY package.json pnpm-lock.yaml nest-cli.json ./
     RUN pnpm install
     COPY tsconfig.json ./
     COPY . .

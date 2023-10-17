@@ -1,12 +1,12 @@
 VERSION 0.7
 FROM node:latest
-WORKDIR /ts-ms
+WORKDIR /ts-ms/src
 
 deps:
-    COPY package.json package-lock.json ./
+    COPY package.json pnpm-lock.json ./
     RUN pnpm install
     COPY tsconfig.json ./
-    COPY src ./src
+    COPY . .
 
 build:
     FROM +deps
@@ -16,7 +16,7 @@ build:
 docker:
     FROM +build
     EXPOSE 8080
-    ENTRYPOINT ["node", "/ts-ms/dist/index.js"]
+    ENTRYPOINT ["node", "dist/main.js"]
     SAVE IMAGE --push tamish13/cloak:ts
 
 # test-setup:

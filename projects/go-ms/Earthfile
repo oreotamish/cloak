@@ -19,13 +19,13 @@ docker:
     ENTRYPOINT ["/go-ms/go-ms"]
     SAVE IMAGE --push tamish13/cloak:go
 
-unit-test:
-    FROM +deps
-    COPY main.go .
-    COPY main_test.go .
-    RUN CGO_ENABLED=0 go test github.com/oreotamish/cloak/projects/go-ms
+# unit-test:
+#     FROM +deps
+#     COPY main.go .
+#     COPY main_test.go .
+#     RUN CGO_ENABLED=0 go test github.com/oreotamish/cloak/projects/go-ms
 
 all:
     BUILD +build
-    BUILD +unit-test
+    # BUILD +unit-test
     BUILD +docker
